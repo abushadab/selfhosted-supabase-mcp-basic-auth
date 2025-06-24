@@ -3,6 +3,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![smithery badge](https://smithery.ai/badge/@HenkDz/selfhosted-supabase-mcp)](https://smithery.ai/server/@HenkDz/selfhosted-supabase-mcp)
 
+<a href="https://glama.ai/mcp/servers/@abushadab/selfhosted-supabase-mcp-basic-auth">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@abushadab/selfhosted-supabase-mcp-basic-auth/badge" alt="Self-Hosted Supabase Server MCP server" />
+</a>
+
 ## Overview
 
 This project provides a [Model Context Protocol (MCP)](https://github.com/modelcontextprotocol/specification) server designed specifically for interacting with **self-hosted Supabase instances**. It bridges the gap between MCP clients (like IDE extensions) and your local or privately hosted Supabase projects, enabling database introspection, management, and interaction directly from your development environment.
@@ -55,7 +59,7 @@ The server exposes the following tools to MCP clients:
 *   **Realtime Inspection**
     *   `list_realtime_publications`: Lists PostgreSQL publications (often `supabase_realtime`).
 
-*(Note: `get_logs` was initially planned but skipped due to implementation complexities in a self-hosted environment).*
+*(Note: `get_logs` was initially planned but skipped due to implementation complexities in a self-hosted environment.)*
 
 ## Setup and Installation
 
@@ -258,4 +262,4 @@ Consult the specific documentation for each client on where to place the `mcp.js
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details. 
+This project is licensed under the MIT License. See the LICENSE file for details.

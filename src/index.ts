@@ -67,6 +67,8 @@ async function main() {
         .option('--service-key <key>', 'Supabase service role key (optional)', process.env.SUPABASE_SERVICE_ROLE_KEY)
         .option('--db-url <url>', 'Direct database connection string (optional, for pg fallback)', process.env.DATABASE_URL)
         .option('--jwt-secret <secret>', 'Supabase JWT secret (optional, needed for some tools)', process.env.SUPABASE_AUTH_JWT_SECRET)
+        .option('--basic-auth-username <username>', 'Basic auth username for HTTP authentication (optional)', process.env.BASIC_AUTH_USERNAME)
+        .option('--basic-auth-password <password>', 'Basic auth password for HTTP authentication (optional)', process.env.BASIC_AUTH_PASSWORD)
         .option('--workspace-path <path>', 'Workspace root path (for file operations)', process.cwd())
         .option('--tools-config <path>', 'Path to a JSON file specifying which tools to enable (e.g., { "enabledTools": ["tool1", "tool2"] }). If omitted, all tools are enabled.')
         .parse(process.argv);
@@ -91,6 +93,8 @@ async function main() {
             supabaseServiceRoleKey: options.serviceKey,
             databaseUrl: options.dbUrl,
             jwtSecret: options.jwtSecret,
+            basicAuthUsername: options.basicAuthUsername,
+            basicAuthPassword: options.basicAuthPassword,
         });
 
         console.error('Supabase client initialized successfully.');

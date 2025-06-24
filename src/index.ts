@@ -70,7 +70,7 @@ async function main() {
         .option('--basic-auth-username <username>', 'Basic auth username for HTTP authentication (optional)', process.env.BASIC_AUTH_USERNAME)
         .option('--basic-auth-password <password>', 'Basic auth password for HTTP authentication (optional)', process.env.BASIC_AUTH_PASSWORD)
         .option('--workspace-path <path>', 'Workspace root path (for file operations)', process.cwd())
-        .option('--tools-config <path>', 'Path to a JSON file specifying which tools to enable (e.g., { "enabledTools": ["tool1", "tool2"] }). If omitted, all tools are enabled.')
+        .option('--tools-config <config>', 'Path to a JSON file or direct JSON string specifying which tools to enable (e.g., { "enabledTools": ["tool1", "tool2"] }). If omitted, all tools are enabled.')
         .parse(process.argv);
 
     const options = program.opts();
@@ -126,33 +126,43 @@ async function main() {
 
         // --- Tool Filtering Logic ---
         let registeredTools: Record<string, AppTool> = { ...availableTools }; // Start with all tools
-        const toolsConfigPath = options.toolsConfig as string | undefined;
+        const toolsConfig = options.toolsConfig as string | undefined;
         let enabledToolNames: Set<string> | null = null; // Use Set for efficient lookup
 
-        if (toolsConfigPath) {
+        if (toolsConfig) {
             try {
-                const resolvedPath = path.resolve(toolsConfigPath);
-                console.error(`Attempting to load tool configuration from: ${resolvedPath}`);
-                if (!fs.existsSync(resolvedPath)) {
-                    throw new Error(`Tool configuration file not found at ${resolvedPath}`);
+                let configJson: any;
+                
+                // Check if it's a JSON string or file path
+                if (toolsConfig.trim().startsWith('{')) {
+                    // Direct JSON string
+                    console.error('Parsing tools configuration from direct JSON string...');
+                    configJson = JSON.parse(toolsConfig);
+                } else {
+                    // File path
+                    const resolvedPath = path.resolve(toolsConfig);
+                    console.error(`Attempting to load tool configuration from: ${resolvedPath}`);
+                    if (!fs.existsSync(resolvedPath)) {
+                        throw new Error(`Tool configuration file not found at ${resolvedPath}`);
+                    }
+                    const configFileContent = fs.readFileSync(resolvedPath, 'utf-8');
+                    configJson = JSON.parse(configFileContent);
                 }
-                const configFileContent = fs.readFileSync(resolvedPath, 'utf-8');
-                const configJson = JSON.parse(configFileContent);
 
                 if (!configJson || typeof configJson !== 'object' || !Array.isArray(configJson.enabledTools)) {
-                     throw new Error('Invalid config file format. Expected { "enabledTools": ["tool1", ...] }.');
+                     throw new Error('Invalid config format. Expected { "enabledTools": ["tool1", ...] }.');
                 }
 
                 // Validate that enabledTools contains only strings
                 const toolNames = configJson.enabledTools as unknown[];
                 if (!toolNames.every((name): name is string => typeof name === 'string')) {
-                    throw new Error('Invalid config file content. "enabledTools" must be an array of strings.');
+                    throw new Error('Invalid config content. "enabledTools" must be an array of strings.');
                 }
 
                 enabledToolNames = new Set(toolNames.map(name => name.trim()).filter(name => name.length > 0));
 
             } catch (error: unknown) {
-                console.error(`Error loading or parsing tool config file '${toolsConfigPath}':`, error instanceof Error ? error.message : String(error));
+                console.error(`Error loading or parsing tool config '${toolsConfig}':`, error instanceof Error ? error.message : String(error));
                 console.error('Falling back to enabling all tools due to config error.');
                 enabledToolNames = null; // Reset to null to signify fallback
             }

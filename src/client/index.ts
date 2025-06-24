@@ -53,21 +53,8 @@ export class SelfhostedSupabaseClient {
     private constructor(options: SelfhostedSupabaseClientOptions) {
         this.options = options;
 
-        // Prepare client options with basic auth headers if provided
-        const clientOptions = { ...options.supabaseClientOptions };
-        if (options.basicAuthUsername && options.basicAuthPassword) {
-            const credentials = Buffer.from(`${options.basicAuthUsername}:${options.basicAuthPassword}`).toString('base64');
-            clientOptions.global = {
-                ...clientOptions.global,
-                headers: {
-                    ...clientOptions.global?.headers,
-                    'Authorization': `Basic ${credentials}`
-                }
-            };
-        }
-
         // Initialize the primary Supabase client (anon key)
-        this.supabase = createClient(options.supabaseUrl, options.supabaseAnonKey, clientOptions);
+        this.supabase = createClient(options.supabaseUrl, options.supabaseAnonKey, options.supabaseClientOptions);
 
         // Validate required options
         if (!options.supabaseUrl || !options.supabaseAnonKey) {

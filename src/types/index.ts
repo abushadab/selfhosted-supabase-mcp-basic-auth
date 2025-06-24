@@ -9,8 +9,6 @@ export interface SelfhostedSupabaseClientOptions {
     supabaseServiceRoleKey?: string; // Optional, but needed for some operations like auto-creating helpers
     databaseUrl?: string; // Optional, but needed for direct DB access/transactions
     jwtSecret?: string; // Add JWT Secret
-    basicAuthUsername?: string; // Basic auth username for HTTP authentication
-    basicAuthPassword?: string; // Basic auth password for HTTP authentication
     supabaseClientOptions?: SupabaseClientOptions<"public">;
 }
 
